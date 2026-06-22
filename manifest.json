@@ -2,7 +2,7 @@
   "name": "Home Loan EMI Calculator",
   "short_name": "EMI Calc",
   "description": "Calculate your home loan EMI with amortization schedule",
-  "id": "/",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

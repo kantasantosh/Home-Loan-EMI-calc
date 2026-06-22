@@ -1,4 +1,4 @@
-const CACHE_NAME = 'emi-calc-v3';
+const CACHE_NAME = 'emi-calc-v4';
 const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -7,7 +7,6 @@ self.addEventListener('install', e => {
       Promise.all(
         ASSETS.map(url =>
           cache.add(url).catch(err => {
-            // Don't let one failed asset kill the whole install.
             console.warn('SW: failed to cache', url, err);
           })
         )
@@ -27,8 +26,42 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return; // let non-GET pass through untouched
+  if (e.request.method !== 'GET') return;
 
+  // Treat ALL navigations (including the app launching from the home-screen
+  // icon) as a request for index.html, regardless of the exact URL/query
+  // Chrome attaches. This avoids exact-Request cache-key mismatches that
+  // can intermittently miss right after install.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      (async () => {
+        try {
+          const cached = await caches.match('./index.html');
+          if (cached) return cached;
+          const res = await fetch('./index.html');
+          if (res && res.status === 200) {
+            try {
+              const cache = await caches.open(CACHE_NAME);
+              cache.put('./index.html', res.clone());
+            } catch (err) {
+              console.warn('SW: cache put failed', err);
+            }
+          }
+          return res;
+        } catch (err) {
+          const fallback = await caches.match('./index.html');
+          if (fallback) return fallback;
+          return new Response(
+            '<h1>Offline</h1><p>Could not load the app and nothing is cached yet. Please reconnect and try again.</p>',
+            { status: 503, headers: { 'Content-Type': 'text/html' } }
+          );
+        }
+      })()
+    );
+    return;
+  }
+
+  // Non-navigation requests (css/js/img/etc.): cache-first, network fallback.
   e.respondWith(
     (async () => {
       try {
@@ -46,12 +79,6 @@ self.addEventListener('fetch', e => {
         }
         return res;
       } catch (err) {
-        // Network failed and nothing cached - fall back for page navigations.
-        if (e.request.mode === 'navigate') {
-          const fallback = await caches.match('./index.html');
-          if (fallback) return fallback;
-        }
-        // Never leave respondWith with a rejected promise.
         return new Response('Offline and not cached.', {
           status: 503,
           statusText: 'Service Unavailable',
