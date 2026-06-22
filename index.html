@@ -14,27 +14,28 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; overflow: hidden; }
 
-    /* ── DESIGN TOKENS ── */
+    /* ── DESIGN TOKENS — rich jewel-tone palette ── */
     :root {
-      --navy:   #0f172a;
-      --blue:   #1d4ed8;
-      --sky:    #38bdf8;
-      --green:  #22c55e;
-      --amber:  #f59e0b;
-      --orange: #f97316;
-      --purple: #8b5cf6;
-      --text:   #1e293b;
-      --muted:  #64748b;
-      --border: #e2e8f0;
-      --card:   rgba(255,255,255,0.92);
-      --bg:     #f0f4ff;
-      --ph:     rgba(148,163,184,0.35); /* placeholder at 25% opacity */
+      --navy:   #1a0b3d;
+      --blue:   #7c3aed;
+      --sky:    #22d3ee;
+      --green:  #10d9a3;
+      --amber:  #fbbf24;
+      --orange: #fb7185;
+      --purple: #a855f7;
+      --text:   #1e1033;
+      --label:  #9b8fb8;   /* field heading - clearly visible, muted purple-grey */
+      --muted:  #7c6f99;
+      --border: #e4dcf5;
+      --card:   rgba(255,255,255,0.94);
+      --bg:     #f3edff;
+      --ph:     rgba(124,58,237,0.16); /* placeholder - very dim, not mistaken for data */
     }
 
     /* ── FULL-SCREEN SHELL ── */
     body {
       font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(160deg, #dbeafe 0%, #ede9fe 50%, #fef9f0 100%);
+      background: linear-gradient(160deg, #2e1065 0%, #4c1d95 35%, #6d28d9 60%, #be185d 100%);
       color: var(--text);
       display: flex;
       flex-direction: column;
@@ -45,10 +46,10 @@
 
     /* ── TOP HEADER ── */
     .app-header {
-      background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 60%, var(--blue) 100%);
+      background: linear-gradient(135deg, var(--navy) 0%, #4c1d95 55%, var(--blue) 100%);
       padding: 14px 18px 12px;
       display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 4px 20px rgba(15,23,42,0.4);
+      box-shadow: 0 4px 20px rgba(26,11,61,0.5);
       flex-shrink: 0;
     }
     .app-header-left { display: flex; align-items: center; gap: 10px; }
@@ -56,9 +57,10 @@
     .app-title { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
     .app-sub   { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 1px; }
     .app-badge {
-      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.85); font-size: 9px; font-weight: 700;
-      padding: 4px 9px; border-radius: 20px; letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.35);
+      color: #fff; font-size: 12px; font-weight: 800;
+      padding: 7px 14px; border-radius: 20px; letter-spacing: 0.4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
 
     /* ── TAB BAR ── */
@@ -98,7 +100,7 @@
       margin-bottom: 14px;
     }
     .section-head {
-      font-size: 13px; font-weight: 700; color: #1e3a5f;
+      font-size: 13px; font-weight: 700; color: #5b21b6;
       margin-bottom: 14px; display: flex; align-items: center; gap: 7px;
     }
     .divider { border-top: 1px solid #f1f5f9; margin: 12px 0; }
@@ -107,8 +109,8 @@
     .field { margin-bottom: 12px; }
     .field:last-child { margin-bottom: 0; }
     .field label {
-      display: block; font-size: 10px; font-weight: 700;
-      color: var(--muted); text-transform: uppercase;
+      display: block; font-size: 10.5px; font-weight: 800;
+      color: var(--label); text-transform: uppercase;
       letter-spacing: 0.7px; margin-bottom: 5px;
     }
     .input-wrap { position: relative; }
@@ -118,62 +120,72 @@
     }
     .field input[type=text], .field input[type=number] {
       width: 100%; height: 46px; border: 1.5px solid var(--border);
-      border-radius: 12px; font-size: 16px; font-weight: 700; color: var(--text);
-      background: rgba(248,250,252,0.85); text-align: right;
+      border-radius: 12px; font-size: 14px; font-weight: 400; color: #5f5876;
+      background: rgba(250,248,255,0.85); text-align: right;
       padding: 0 36px 0 14px;
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
     .field input.name-input {
-      text-align: left; font-weight: 500; padding: 0 14px;
-      color: var(--text);
+      text-align: left; font-weight: 400; padding: 0 14px; font-size: 14px;
+      color: #5f5876;
     }
-    .field input::placeholder { color: var(--ph); }
+    .field input::placeholder { color: var(--ph); font-weight: 400; }
     .field input:focus {
-      outline: none; border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(29,78,216,0.10);
+      outline: none; border-color: var(--blue); color: var(--text); font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
     }
 
+    /* ── ROW LAYOUTS (compact, multiple fields per row) ── */
+    .row-2  { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+    .row-3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .row-3 .field, .row-2 .field { margin-bottom: 0; }
+    .row-2 .field label { margin-bottom: 0; }
+
     /* ── FREQUENCY GRID ── */
-    .freq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .freq-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; }
     .freq-btn {
-      padding: 10px 4px; border: 1.5px solid var(--border);
-      border-radius: 12px; background: rgba(248,250,252,0.9);
-      font-size: 11.5px; font-weight: 600; cursor: pointer;
+      padding: 9px 2px; border: 1.5px solid var(--border);
+      border-radius: 10px; background: rgba(250,248,255,0.9);
+      font-size: 10.5px; font-weight: 700; cursor: pointer;
       color: var(--muted); transition: all 0.15s; font-family: inherit;
     }
     .freq-btn.active {
-      background: linear-gradient(135deg, #1e3a5f, var(--blue));
+      background: linear-gradient(135deg, #7c3aed, #c026d3);
       color: #fff; border-color: transparent;
-      box-shadow: 0 4px 14px rgba(29,78,216,0.35);
+      box-shadow: 0 4px 14px rgba(124,58,237,0.4);
     }
 
+    /* ── ACCELERATOR ROW ── */
+    .accel-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .accel-row .field label { font-size: 9px; line-height: 1.3; min-height: 22px; }
+
     /* ── HINT TEXT ── */
-    .hint { font-size: 11px; color: #94a3b8; margin: -8px 0 12px; line-height: 1.6; }
+    .hint { font-size: 11px; color: var(--muted); margin: -8px 0 12px; line-height: 1.6; }
 
     /* ── HERO EMI BAR ── */
     .emi-hero {
-      background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 55%, var(--blue) 100%);
+      background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 55%, #c026d3 100%);
       border-radius: 20px; padding: 18px 20px;
       display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 14px;
-      box-shadow: 0 8px 28px rgba(15,23,42,0.35);
+      box-shadow: 0 8px 28px rgba(124,58,237,0.4);
     }
     .emi-hero-label { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
     .emi-hero-value { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
     .emi-hero-divider { width: 1px; height: 44px; background: rgba(255,255,255,0.18); }
 
     /* ── STAT CARDS ── */
-    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 7px; margin-bottom: 14px; }
     .stat-card {
       background: var(--card); backdrop-filter: blur(20px);
-      border-radius: 16px; padding: 13px 14px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      border-radius: 14px; padding: 10px 7px;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.1);
       border: 1px solid rgba(255,255,255,0.95);
     }
-    .stat-icon  { font-size: 18px; margin-bottom: 5px; }
-    .stat-label { font-size: 9.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
-    .stat-value { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .stat-icon  { font-size: 15px; margin-bottom: 4px; }
+    .stat-label { font-size: 8px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 3px; }
+    .stat-value { font-size: 14px; font-weight: 800; letter-spacing: -0.2px; }
 
     /* ── SAVINGS IMPACT ── */
     .impact-box {
@@ -194,14 +206,20 @@
 
     /* ── DISCLAIMER ── */
     .disclaimer {
-      background: rgba(254,249,240,0.95); border: 1px solid #fed7aa;
+      background: rgba(255,251,245,0.95); border: 1px solid #fbcfe8;
       border-left: 4px solid var(--orange); border-radius: 12px;
-      padding: 11px 13px; margin-top: 4px;
+      padding: 10px 13px; margin-top: 4px;
     }
-    .disclaimer-title   { font-size: 10px; font-weight: 700; color: #9a3412; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .disclaimer-preview { font-size: 10.5px; color: #c2410c; line-height: 1.6; }
-    .disclaimer-full    { font-size: 10.5px; color: #c2410c; line-height: 1.6; display: none; margin-top: 4px; }
-    .disclaimer-toggle  { font-size: 10.5px; color: #ea580c; font-weight: 700; cursor: pointer; background: none; border: none; padding: 0; margin-top: 3px; display: inline-block; font-family: inherit; }
+    .disclaimer-title   {
+      font-size: 10px; font-weight: 700; color: #9d174d; margin: 0;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      background: none; border: none; padding: 0; width: 100%; font-family: inherit;
+    }
+    .disclaimer-title .chev { transition: transform 0.2s; font-size: 9px; }
+    .disclaimer-title.open .chev { transform: rotate(180deg); }
+    .disclaimer-body    { font-size: 10.5px; color: #be185d; line-height: 1.6; display: none; margin-top: 6px; }
+    .disclaimer-body.open { display: block; }
 
     /* ── CHART ── */
     .chart-card {
@@ -231,16 +249,17 @@
     }
     .table-wrap::-webkit-scrollbar { height: 3px; }
     .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
-    table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11.5px; background: #ffffff; }
     thead th {
-      background: linear-gradient(135deg, #1e3a5f, var(--blue));
+      background: linear-gradient(135deg, #5b21b6, var(--blue));
       color: #fff; padding: 10px 10px; text-align: right;
       font-weight: 700; font-size: 10px; white-space: nowrap;
     }
     thead th:first-child { text-align: center; }
-    tbody td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+    tbody td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #f3effa; white-space: nowrap; color: var(--text); }
     tbody td:first-child { text-align: center; font-weight: 700; color: var(--muted); }
-    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody tr:nth-child(odd)  { background: #ffffff; }
+    tbody tr:nth-child(even) { background: #faf7ff; }
 
     /* ── FOOTER ── */
     .footer { text-align: center; padding: 12px 0 4px; }
@@ -249,7 +268,7 @@
 
     /* ── SCREEN 2 PAGE TITLE ── */
     .screen2-head {
-      font-size: 13px; font-weight: 700; color: #1e3a5f;
+      font-size: 13px; font-weight: 700; color: #5b21b6;
       margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
     }
   </style>
@@ -291,7 +310,7 @@
     <!-- Your Details -->
     <div class="section-card">
       <div class="section-head">👤 Your Details</div>
-      <div class="field">
+      <div class="row-2 field">
         <label>Your Name</label>
         <div class="input-wrap">
           <input type="text" id="userName" class="name-input"
@@ -305,41 +324,43 @@
     <div class="section-card">
       <div class="section-head">📋 Loan Details</div>
 
-      <div class="field">
-        <label>Loan Amount</label>
-        <div class="input-wrap">
-          <input type="text" id="loanAmount" inputmode="numeric"
-            value="50,00,000" placeholder="e.g. 50,00,000"
-            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'loanAmount')" oninput="onInputNum(this)"/>
-          <span class="cur">₹</span>
+      <div class="row-3">
+        <div class="field">
+          <label>Loan Amt</label>
+          <div class="input-wrap">
+            <input type="text" id="loanAmount" inputmode="numeric"
+              value="50,00,000" placeholder="50,00,000"
+              onfocus="onFocusNum(this)" onblur="onBlurNum(this,'loanAmount')" oninput="onInputNum(this)" style="padding-right:24px"/>
+            <span class="cur" style="right:8px;font-size:10px">₹</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Rate</label>
+          <div class="input-wrap">
+            <input type="text" id="rate" inputmode="decimal"
+              value="8.5" placeholder="8.5"
+              onfocus="onFocusDec(this)" onblur="onBlurDec(this,'rate')" oninput="onInputDec(this)" style="padding-right:24px"/>
+            <span class="suf" style="right:8px;font-size:10px">%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Tenure</label>
+          <div class="input-wrap">
+            <input type="text" id="tenure" inputmode="numeric"
+              value="20" placeholder="20"
+              onfocus="onFocusNum(this)" onblur="onBlurNum(this,'tenure')" oninput="onInputNum(this)" style="padding-right:28px"/>
+            <span class="suf" style="right:8px;font-size:10px">Yr</span>
+          </div>
         </div>
       </div>
 
-      <div class="field">
-        <label>Annual Interest Rate</label>
-        <div class="input-wrap">
-          <input type="text" id="rate" inputmode="decimal"
-            value="8.5" placeholder="e.g. 8.5"
-            onfocus="onFocusDec(this)" onblur="onBlurDec(this,'rate')" oninput="onInputDec(this)"/>
-          <span class="suf">%</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Loan Tenure</label>
-        <div class="input-wrap">
-          <input type="text" id="tenure" inputmode="numeric"
-            value="20" placeholder="e.g. 20"
-            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'tenure')" oninput="onInputNum(this)"/>
-          <span class="suf">Yrs</span>
-        </div>
-      </div>
-
-      <div class="field">
+      <div class="field" style="margin-top:12px">
         <label>Instalment Frequency</label>
         <div class="freq-grid">
           <button class="freq-btn active" onclick="setFreq('Monthly',this)">Monthly</button>
-          <button class="freq-btn" onclick="setFreq('Quarterly',this)">Quarterly</button>
+          <button class="freq-btn" onclick="setFreq('Quarterly',this)">Qtrly</button>
           <button class="freq-btn" onclick="setFreq('Half-Yearly',this)">Half-Yrly</button>
           <button class="freq-btn" onclick="setFreq('Yearly',this)">Yearly</button>
         </div>
@@ -351,33 +372,35 @@
       <div class="section-head">⚡ Accelerators</div>
       <p class="hint">Tweak these to see how much faster you can close the loan.</p>
 
-      <div class="field">
-        <label>Extra EMIs per Year</label>
-        <div class="input-wrap">
-          <input type="text" id="extraEMI" inputmode="numeric"
-            value="0" placeholder="0"
-            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'extraEMI')" oninput="onInputNum(this)"/>
-          <span class="suf">EMI</span>
+      <div class="accel-row">
+        <div class="field">
+          <label>Extra EMI (Yr)</label>
+          <div class="input-wrap">
+            <input type="text" id="extraEMI" inputmode="numeric"
+              value="0" placeholder="0"
+              onfocus="onFocusNum(this)" onblur="onBlurNum(this,'extraEMI')" oninput="onInputNum(this)" style="padding-right:30px"/>
+            <span class="suf" style="right:8px;font-size:9px">EMI</span>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <label>Annual Lump-Sum Prepayment</label>
-        <div class="input-wrap">
-          <input type="text" id="prepay" inputmode="numeric"
-            value="0" placeholder="0"
-            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'prepay')" oninput="onInputNum(this)"/>
-          <span class="cur">₹</span>
+        <div class="field">
+          <label>Lump Sum (Yr)</label>
+          <div class="input-wrap">
+            <input type="text" id="prepay" inputmode="numeric"
+              value="0" placeholder="0"
+              onfocus="onFocusNum(this)" onblur="onBlurNum(this,'prepay')" oninput="onInputNum(this)" style="padding-right:22px"/>
+            <span class="cur" style="right:8px;font-size:10px">₹</span>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <label>Annual EMI Step-Up</label>
-        <div class="input-wrap">
-          <input type="text" id="stepUp" inputmode="decimal"
-            value="0" placeholder="0"
-            onfocus="onFocusDec(this)" onblur="onBlurDec(this,'stepUp')" oninput="onInputDec(this)"/>
-          <span class="suf">%</span>
+        <div class="field">
+          <label>EMI Step-Up (Yr)</label>
+          <div class="input-wrap">
+            <input type="text" id="stepUp" inputmode="decimal"
+              value="0" placeholder="0"
+              onfocus="onFocusDec(this)" onblur="onBlurDec(this,'stepUp')" oninput="onInputDec(this)" style="padding-right:22px"/>
+            <span class="suf" style="right:8px;font-size:10px">%</span>
+          </div>
         </div>
       </div>
     </div>
@@ -396,7 +419,7 @@
     </div>
 
     <!-- Loan Snapshot -->
-    <div class="section-head" style="margin-bottom:10px">📊 Loan Snapshot</div>
+    <div class="section-head" style="margin-bottom:10px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.25)">📊 Loan Snapshot</div>
     <div class="card-grid">
       <div class="stat-card" style="border-top:3px solid #3b82f6">
         <div class="stat-icon">🏦</div>
@@ -462,10 +485,12 @@
 
     <!-- Disclaimer -->
     <div class="disclaimer">
-      <div class="disclaimer-title">⚠️ Disclaimer</div>
-      <p class="disclaimer-preview">For indicative planning only. Calculations use the reducing balance method with prepayments applied at year-end.</p>
-      <p class="disclaimer-full" id="disclaimerFull">Actual savings may vary based on your lender's terms, prepayment timing, and applicable charges. Prepayment penalties may apply on fixed-rate loans. Please consult your lender or a financial advisor before making any financial decisions.</p>
-      <button class="disclaimer-toggle" id="disclaimerBtn" onclick="toggleDisclaimer()">Read more ▾</button>
+      <button class="disclaimer-title" id="disclaimerBtn" onclick="toggleDisclaimer()">
+        ⚠️ Disclaimer <span class="chev">▾</span>
+      </button>
+      <div class="disclaimer-body" id="disclaimerFull">
+        For indicative planning only. Calculations use the reducing balance method with prepayments applied at year-end. Actual savings may vary based on your lender's terms, prepayment timing, and applicable charges. Prepayment penalties may apply on fixed-rate loans. Please consult your lender or a financial advisor before making any financial decisions.
+      </div>
     </div>
 
     <div class="footer">
@@ -570,8 +595,8 @@ function onInputDec(el) { const raw=el.value.replace(/[^\d.]/g,""); if((raw.matc
 function setFreq(f, btn) { state.freq=f; document.querySelectorAll(".freq-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); recalculate(); }
 
 function toggleDisclaimer() {
-  const full=document.getElementById("disclaimerFull"), btn=document.getElementById("disclaimerBtn");
-  const open=full.style.display==="block"; full.style.display=open?"none":"block"; btn.textContent=open?"Read more ▾":"Read less ▴";
+  const body=document.getElementById("disclaimerFull"), btn=document.getElementById("disclaimerBtn");
+  const open=body.classList.toggle("open"); btn.classList.toggle("open", open);
 }
 function updateName() {
   const name=document.getElementById("userName").value.trim();
