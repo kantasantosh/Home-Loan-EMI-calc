@@ -24,7 +24,7 @@
       --orange: #fb7185;
       --purple: #a855f7;
       --text:   #1e1033;
-      --label:  #9b8fb8;   /* field heading - clearly visible, muted purple-grey */
+      --label:  #6b5c8a;   /* field heading - darker than before, lighter than section headings */
       --muted:  #7c6f99;
       --border: #e4dcf5;
       --card:   rgba(255,255,255,0.94);
@@ -68,7 +68,7 @@
     .screen {
       position: absolute; inset: 0;
       overflow-y: auto; overflow-x: hidden;
-      padding: 16px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+      padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
       display: none;
       -webkit-overflow-scrolling: touch;
     }
@@ -123,7 +123,7 @@
     /* ── ROW LAYOUTS (compact, multiple fields per row) ── */
     .row-2  { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
     .row-3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .row-3 .field, .row-2 .field { margin-bottom: 0; }
+    .row-3 .field, .row-2 .field, .accel-row .field { margin-bottom: 0; }
     .row-2 .field label { margin-bottom: 0; }
 
     /* ── FREQUENCY GRID ── */
@@ -142,7 +142,7 @@
 
     /* ── ACCELERATOR ROW ── */
     .accel-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .accel-row .field label { font-size: 9px; line-height: 1.3; min-height: 22px; }
+    .accel-row .field label { font-size: 9px; line-height: 1.3; }
 
     /* ── HINT TEXT ── */
     .hint { font-size: 11px; color: var(--muted); margin: -4px 0 8px; line-height: 1.5; }
@@ -264,7 +264,7 @@
 <!-- ── APP HEADER ── -->
 <div class="app-header">
   <div class="app-header-left">
-    <img src="./icon-192.png" alt="logo" class="app-logo-img"/>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAErklEQVR4nO3bvVEdMRSG4b2MM3ICMtwHAaFrwI1QAY24BhzSiQugCgfLLMvdP0mfVjpHep8CjFZ650jG48v97eNwvqe7lwI/BVfeP17P/hGX8wIiGlNOiil/QHRjXN6SsgVEN+5kKSlDQKTjmpiRFBDpNCM5o5vkH0k9LUk+zZQJRDoNix1F0ROIetoWe75xAVFPD6JOOfQKI50OhVxnQROIevoUcu7HAVFPzw5P/yAg6sF+A+m/BwKG/YAYPxjtlLAZEPVgbquH9YCoB0urVfAGgmQlIMYPtizbuA6IerDvqhCuMEi+BcT4QYh5J0wgSL4CYvwg3FQLEwgSAoLkMyDuL8Qam2ECQUJAkFzubx+5v5CMCQQJAUFCQJBcnh/eaq8BjjGBDvz596v2EkwjoD1jPTS0g4A2zbuhoS28gVZs5fL759/CK7GPgK4dDhsymuMK+ybkquI6myOgL+Fl0NCEgD7FNkFDIwIahtQaaGjgEa1H0PmbuuuAMo6QbjPq9wrLewF1e511GtAZ591nQz0GdN5Jd9hQdwGdfca9NdTRI7rk0fbzpu5lAhUeDP3MoS4mUMXjbH4UtT+B6g6D5kdR4wFZOD8LazhPywHZOTk7K8muzTeQzQNr8j3U4ASyWc9geGGK1gIyfkjGl5egqSvM0fE0c521M4Ec1TN4W+2ORgLyeB4e17zk/grzfgze7zLfE8h7PYP/T3AckPetn7j+EK9XmOtN3+LxOnM5gZqsZ/D5Xf4C8rjL4dx9nacrzN3mJnN0l7mZQP3UM7j6WB8BOdrQXLx8soOAvGxldi4+3PobyMUmns3yk8j0BKKekeV9MDqBLG9ZLTbnkMUJRD2rbG6LuYBsbpMRBjfHVkAGN8gaa1tkKCBrW2OWqY2y8og2tSleWHhW1w+IdBTVG6p8hVGPqPoG1gyo+se3oe42VguIejKquJl1AqKe7GptaYVHNPWcqvCzumhApFNGyYbKXWHUU0zJrS4UEPUUVmzD6/8icYnatlT/teGSoX8Lg0cEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQ/ai+gMv3/enb+/2iZQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQ/ai+gMv3/enb+/2iZQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQ/ai+gMv3/enb+/2iZQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJAkBAQJAQECQFBQkCQEBAkl+eHt9prgGNMIEgICBICgoSAICEgSAgIEgKChIAguXn/eK29BjjGBIKEgCAhIEhuhmHgGYQ07x+vTCBICAiSz4C4xRBrbIYJBAkBQfIVELcYwk21MIEg+RYQQwgh5p0wgSC5DoghhH1XhaxMIBrClmUbXGGQrAfEEMLSahWbE4iGMLfVw94VRkMY7ZTAGwiSg4AYQthv4HgC0VDPDk8/6AqjoT6FnPvl/vYx/E98unsR1gM3wkdG3COaUdSDqFOO/lsYDbUt9nzjrrA5rrPGpI2G9N8DMYpaknya6RNowihyTRwEGQIakZE7We6QbAFNKMm4vG+P/AFNKMmUk96s/wGrv2BYSvTkWgAAAABJRU5ErkJggg==" alt="logo" class="app-logo-img"/>
     <div class="app-title" id="headerTitle">Home Loan EMI Planner</div>
   </div>
   <button class="nav-arrow" id="navArrow" onclick="switchTab(activeTab===1?2:1)">→</button>
@@ -375,8 +375,7 @@
     </div>
 
     <!-- Loan Snapshot -->
-    <div class="section-head" style="margin-bottom:10px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.25)">📊 Loan Snapshot</div>
-    <div class="card-grid">
+    <div class="card-grid" style="margin-top:10px">
       <div class="stat-card" style="border-top:3px solid #3b82f6">
         <div class="stat-label">Principal</div>
         <div class="stat-value" id="cardPrincipal" style="color:#3b82f6">₹0</div>
