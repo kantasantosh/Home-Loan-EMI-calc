@@ -6,319 +6,383 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="EMI Calc"/>
-  <meta name="theme-color" content="#1e3a5f"/>
+  <meta name="theme-color" content="#0f172a"/>
+  <link rel="manifest" href="manifest.json"/>
   <title>Home Loan EMI Calculator</title>
   <style>
-    /* ── RESET & BASE ─────────────────────────────────────────────────── */
+    /* ── RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html { height: 100%; }
+    html, body { height: 100%; overflow: hidden; }
+
+    /* ── DESIGN TOKENS ── */
+    :root {
+      --navy:   #0f172a;
+      --blue:   #1d4ed8;
+      --sky:    #38bdf8;
+      --green:  #22c55e;
+      --amber:  #f59e0b;
+      --orange: #f97316;
+      --purple: #8b5cf6;
+      --text:   #1e293b;
+      --muted:  #64748b;
+      --border: #e2e8f0;
+      --card:   rgba(255,255,255,0.92);
+      --bg:     #f0f4ff;
+      --ph:     rgba(148,163,184,0.35); /* placeholder at 25% opacity */
+    }
+
+    /* ── FULL-SCREEN SHELL ── */
     body {
       font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(160deg, #e8f0fe 0%, #f0f4ff 40%, #fef9f0 100%);
-      min-height: 100vh;
-      color: #1e293b;
-      padding: 16px 14px 48px;
-      padding-top: calc(16px + env(safe-area-inset-top));
-      padding-bottom: calc(48px + env(safe-area-inset-bottom));
+      background: linear-gradient(160deg, #dbeafe 0%, #ede9fe 50%, #fef9f0 100%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ── HEADER ───────────────────────────────────────────────────────── */
-    .header {
-      display: flex; justify-content: space-between; align-items: center;
-      background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
-      border-radius: 20px; padding: 18px 22px; margin-bottom: 20px;
-      box-shadow: 0 8px 32px rgba(30,58,95,0.35);
+    /* ── STATUS BAR SPACER ── */
+    .safe-top { height: env(safe-area-inset-top, 0px); background: var(--navy); }
+
+    /* ── TOP HEADER ── */
+    .app-header {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 60%, var(--blue) 100%);
+      padding: 14px 18px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(15,23,42,0.4);
+      flex-shrink: 0;
     }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-icon { font-size: 38px; }
-    .header-title { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.4px; }
-    .header-sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 3px; }
-    .header-badge {
-      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-      color: #fff; font-size: 10px; font-weight: 700;
-      padding: 5px 10px; border-radius: 20px; letter-spacing: 0.5px;
-      border: 1px solid rgba(255,255,255,0.25); white-space: nowrap;
+    .app-header-left { display: flex; align-items: center; gap: 10px; }
+    .app-logo { font-size: 28px; line-height: 1; }
+    .app-title { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+    .app-sub   { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+    .app-badge {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.85); font-size: 9px; font-weight: 700;
+      padding: 4px 9px; border-radius: 20px; letter-spacing: 0.5px;
     }
 
-    /* ── LAYOUT ───────────────────────────────────────────────────────── */
-    /* Mobile: single column, full width. Tablet+: side by side.          */
-    .layout { display: flex; flex-direction: column; gap: 16px; }
-    @media (min-width: 700px) {
-      .layout { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
-      .panel  { flex: 1 1 280px; }
-      .results { flex: 2 1 340px; }
+    /* ── TAB BAR ── */
+    .tab-bar {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--navy);
+      flex-shrink: 0;
     }
-    .panel {
-      background: rgba(255,255,255,0.88); backdrop-filter: blur(20px);
-      border-radius: 20px; padding: 20px 18px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.9);
+    .tab-btn {
+      padding: 10px 8px; border: none; background: transparent;
+      color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all 0.2s;
+      border-bottom: 2px solid transparent; display: flex;
+      flex-direction: column; align-items: center; gap: 3px;
     }
-    .results { display: flex; flex-direction: column; gap: 0; }
+    .tab-btn .tab-icon { font-size: 18px; }
+    .tab-btn.active { color: var(--sky); border-bottom-color: var(--sky); }
 
-    /* ── SECTION HEADINGS ─────────────────────────────────────────────── */
-    .section-title {
-      font-size: 14px; font-weight: 700; color: #1e3a5f;
-      margin: 0 0 14px; letter-spacing: 0.1px;
+    /* ── SCROLLABLE SCREEN AREA ── */
+    .screens { flex: 1; overflow: hidden; position: relative; }
+    .screen {
+      position: absolute; inset: 0;
+      overflow-y: auto; overflow-x: hidden;
+      padding: 16px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+      display: none;
+      -webkit-overflow-scrolling: touch;
     }
-    .divider { border-top: 1px solid #f1f5f9; margin: 16px 0; }
-    .hint { font-size: 11px; color: #94a3b8; margin: -8px 0 14px; line-height: 1.6; }
+    .screen.active { display: block; }
+    .screen::-webkit-scrollbar { display: none; }
 
-    /* ── INPUT FIELDS ─────────────────────────────────────────────────── */
-    .field { margin-bottom: 14px; }
+    /* ── SECTION CARDS ── */
+    .section-card {
+      background: var(--card); backdrop-filter: blur(20px);
+      border-radius: 20px; padding: 18px 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      border: 1px solid rgba(255,255,255,0.9);
+      margin-bottom: 14px;
+    }
+    .section-head {
+      font-size: 13px; font-weight: 700; color: #1e3a5f;
+      margin-bottom: 14px; display: flex; align-items: center; gap: 7px;
+    }
+    .divider { border-top: 1px solid #f1f5f9; margin: 12px 0; }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
     .field label {
-      display: block; font-size: 11px; font-weight: 600; color: #94a3b8;
-      margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px;
+      display: block; font-size: 10px; font-weight: 700;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.7px; margin-bottom: 5px;
     }
     .input-wrap { position: relative; }
-    /* ₹ symbol now sits on the RIGHT side of currency fields */
-    .input-wrap .cur {
+    .input-wrap .suf, .input-wrap .cur {
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      font-size: 13px; color: #94a3b8; pointer-events: none; font-weight: 700;
-    }
-    .input-wrap .suf {
-      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      font-size: 12px; color: #94a3b8; pointer-events: none; font-weight: 600;
+      font-size: 12px; color: var(--muted); pointer-events: none; font-weight: 600;
     }
     .field input[type=text], .field input[type=number] {
-      width: 100%; height: 44px; border: 1.5px solid #e2e8f0; border-radius: 12px;
-      font-size: 16px; font-weight: 700; color: #1e293b;
-      background: rgba(248,250,252,0.9);
-      /* Right-align numbers so digits line up cleanly */
-      text-align: right;
+      width: 100%; height: 46px; border: 1.5px solid var(--border);
+      border-radius: 12px; font-size: 16px; font-weight: 700; color: var(--text);
+      background: rgba(248,250,252,0.85); text-align: right;
+      padding: 0 36px 0 14px;
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
-    /* Name field: left-aligned, lighter colour — it's text, not a number */
     .field input.name-input {
-      text-align: left; color: #94a3b8; font-weight: 500;
-      font-style: italic;
+      text-align: left; font-weight: 500; padding: 0 14px;
+      color: var(--text);
     }
+    .field input::placeholder { color: var(--ph); }
     .field input:focus {
-      outline: none; border-color: #1d4ed8;
-      box-shadow: 0 0 0 3px rgba(29,78,216,0.12);
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,78,216,0.10);
     }
 
-    /* ── FREQUENCY BUTTONS ────────────────────────────────────────────── */
+    /* ── FREQUENCY GRID ── */
     .freq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .freq-btn {
-      padding: 10px 4px; border: 1.5px solid #e2e8f0; border-radius: 12px;
-      background: rgba(248,250,252,0.9); font-size: 12px; font-weight: 600;
-      cursor: pointer; color: #64748b; transition: all 0.15s; font-family: inherit;
+      padding: 10px 4px; border: 1.5px solid var(--border);
+      border-radius: 12px; background: rgba(248,250,252,0.9);
+      font-size: 11.5px; font-weight: 600; cursor: pointer;
+      color: var(--muted); transition: all 0.15s; font-family: inherit;
     }
     .freq-btn.active {
-      background: linear-gradient(135deg, #1e3a5f, #1d4ed8);
+      background: linear-gradient(135deg, #1e3a5f, var(--blue));
       color: #fff; border-color: transparent;
-      box-shadow: 0 4px 12px rgba(29,78,216,0.35);
+      box-shadow: 0 4px 14px rgba(29,78,216,0.35);
     }
 
-    /* ── HERO EMI BAR ─────────────────────────────────────────────────── */
+    /* ── HINT TEXT ── */
+    .hint { font-size: 11px; color: #94a3b8; margin: -8px 0 12px; line-height: 1.6; }
+
+    /* ── HERO EMI BAR ── */
     .emi-hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1d4ed8 100%);
-      border-radius: 20px; padding: 20px 24px;
+      background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 55%, var(--blue) 100%);
+      border-radius: 20px; padding: 18px 20px;
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; box-shadow: 0 8px 28px rgba(15,23,42,0.4);
+      margin-bottom: 14px;
+      box-shadow: 0 8px 28px rgba(15,23,42,0.35);
     }
-    .emi-hero-label { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
-    .emi-hero-value { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-    .emi-hero-divider { width: 1px; height: 48px; background: rgba(255,255,255,0.2); }
+    .emi-hero-label { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+    .emi-hero-value { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .emi-hero-divider { width: 1px; height: 44px; background: rgba(255,255,255,0.18); }
 
-    /* ── STAT CARDS ───────────────────────────────────────────────────── */
-    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    /* ── STAT CARDS ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
     .stat-card {
-      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
-      border-radius: 18px; padding: 14px 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+      background: var(--card); backdrop-filter: blur(20px);
+      border-radius: 16px; padding: 13px 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
       border: 1px solid rgba(255,255,255,0.95);
     }
-    .stat-icon { font-size: 20px; margin-bottom: 6px; }
-    .stat-label { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
-    .stat-value { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+    .stat-icon  { font-size: 18px; margin-bottom: 5px; }
+    .stat-label { font-size: 9.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 3px; }
+    .stat-value { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
 
-    /* ── SAVINGS IMPACT ───────────────────────────────────────────────── */
+    /* ── SAVINGS IMPACT ── */
     .impact-box {
       background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      border: 1.5px solid #86efac; border-radius: 18px; padding: 16px 18px;
-      margin-bottom: 16px; box-shadow: 0 4px 16px rgba(34,197,94,0.12);
+      border: 1.5px solid #86efac; border-radius: 18px; padding: 14px 16px;
+      margin-bottom: 14px; box-shadow: 0 4px 16px rgba(34,197,94,0.1);
       display: none;
     }
-    .impact-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .impact-title { font-size: 14px; font-weight: 700; color: #166534; }
-    .savings-badge { background: #16a34a; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-    .impact-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(134,239,172,0.4); }
-    .impact-lbl { font-size: 12px; color: #166534; font-weight: 500; }
-    .impact-vals { display: flex; align-items: center; gap: 6px; }
-    .impact-before { font-size: 12px; color: #94a3b8; text-decoration: line-through; }
-    .impact-arrow { font-size: 11px; color: #94a3b8; }
-    .impact-after { font-size: 13px; font-weight: 800; color: #16a34a; }
+    .impact-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .impact-title  { font-size: 13px; font-weight: 700; color: #166534; }
+    .savings-badge { background: #16a34a; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+    .impact-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(134,239,172,0.35); }
+    .impact-lbl    { font-size: 11.5px; color: #166534; font-weight: 500; }
+    .impact-vals   { display: flex; align-items: center; gap: 5px; }
+    .impact-before { font-size: 11px; color: #94a3b8; text-decoration: line-through; }
+    .impact-arrow  { font-size: 10px; color: #94a3b8; }
+    .impact-after  { font-size: 12px; font-weight: 800; color: #16a34a; }
 
-    /* ── SVG CHART ────────────────────────────────────────────────────── */
-    .chart-card {
-      background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
-      border-radius: 18px; padding: 16px 12px 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 1px solid rgba(255,255,255,0.95);
-      margin-bottom: 16px; overflow: hidden;
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      background: rgba(254,249,240,0.95); border: 1px solid #fed7aa;
+      border-left: 4px solid var(--orange); border-radius: 12px;
+      padding: 11px 13px; margin-top: 4px;
     }
-    .chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 8px; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #64748b; font-weight: 600; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+    .disclaimer-title   { font-size: 10px; font-weight: 700; color: #9a3412; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .disclaimer-preview { font-size: 10.5px; color: #c2410c; line-height: 1.6; }
+    .disclaimer-full    { font-size: 10.5px; color: #c2410c; line-height: 1.6; display: none; margin-top: 4px; }
+    .disclaimer-toggle  { font-size: 10.5px; color: #ea580c; font-weight: 700; cursor: pointer; background: none; border: none; padding: 0; margin-top: 3px; display: inline-block; font-family: inherit; }
 
-    /* ── CHART TOOLTIP ────────────────────────────────────────────────── */
+    /* ── CHART ── */
+    .chart-card {
+      background: var(--card); backdrop-filter: blur(20px);
+      border-radius: 18px; padding: 14px 10px 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      border: 1px solid rgba(255,255,255,0.95);
+      margin-bottom: 14px; overflow: hidden;
+    }
+    .chart-legend { display: flex; gap: 14px; justify-content: center; margin-top: 8px; }
+    .legend-item  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); font-weight: 600; }
+    .legend-dot   { width: 9px; height: 9px; border-radius: 2px; }
+
+    /* ── CHART TOOLTIP ── */
     #chart-tooltip {
       position: fixed; background: #1e293b; color: #fff;
-      padding: 8px 12px; border-radius: 10px; font-size: 11px;
+      padding: 7px 11px; border-radius: 10px; font-size: 11px;
       pointer-events: none; display: none; z-index: 999;
       box-shadow: 0 8px 24px rgba(0,0,0,0.3); line-height: 1.7;
     }
 
-    /* ── DISCLAIMER ───────────────────────────────────────────────────── */
-    .disclaimer {
-      background: rgba(254,249,240,0.95); border: 1px solid #fed7aa;
-      border-left: 4px solid #f97316; border-radius: 12px;
-      padding: 12px 14px; margin-top: 16px;
-    }
-    .disclaimer-title { font-size: 11px; font-weight: 700; color: #9a3412; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .disclaimer-preview { font-size: 11px; color: #c2410c; line-height: 1.6; text-align: justify; }
-    .disclaimer-full { font-size: 11px; color: #c2410c; line-height: 1.6; text-align: justify; display: none; margin-top: 4px; }
-    .disclaimer-toggle {
-      font-size: 11px; color: #ea580c; font-weight: 700; cursor: pointer;
-      background: none; border: none; padding: 0; margin-top: 4px;
-      display: inline-block; font-family: inherit;
-    }
-
-    /* ── TABLE ────────────────────────────────────────────────────────── */
+    /* ── TABLE ── */
     .table-wrap {
-      overflow-x: auto; border-radius: 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 1px solid #e2e8f0;
-      margin-bottom: 16px;
+      overflow-x: auto; border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      border: 1px solid var(--border); margin-bottom: 14px;
     }
-    .table-wrap::-webkit-scrollbar { height: 4px; }
+    .table-wrap::-webkit-scrollbar { height: 3px; }
     .table-wrap::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
     thead th {
-      background: linear-gradient(135deg, #1e3a5f, #1d4ed8);
-      color: #fff; padding: 11px 12px; text-align: right;
-      font-weight: 700; font-size: 11px; white-space: nowrap;
+      background: linear-gradient(135deg, #1e3a5f, var(--blue));
+      color: #fff; padding: 10px 10px; text-align: right;
+      font-weight: 700; font-size: 10px; white-space: nowrap;
     }
-    tbody td { padding: 9px 12px; text-align: right; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+    thead th:first-child { text-align: center; }
+    tbody td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
+    tbody td:first-child { text-align: center; font-weight: 700; color: var(--muted); }
     tbody tr:nth-child(even) { background: #f8fafc; }
 
-    /* ── FOOTER ───────────────────────────────────────────────────────── */
-    .footer { text-align: center; margin-top: 24px; padding: 16px; border-top: 1px solid rgba(30,58,95,0.1); }
-    .footer p { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .footer small { font-size: 11px; color: #cbd5e1; }
+    /* ── FOOTER ── */
+    .footer { text-align: center; padding: 12px 0 4px; }
+    .footer p     { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .footer small { font-size: 10px; color: #cbd5e1; }
+
+    /* ── SCREEN 2 PAGE TITLE ── */
+    .screen2-head {
+      font-size: 13px; font-weight: 700; color: #1e3a5f;
+      margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+    }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <div class="header-icon">🏠</div>
+<div class="safe-top"></div>
+
+<!-- ── APP HEADER ── -->
+<div class="app-header">
+  <div class="app-header-left">
+    <div class="app-logo">🏠</div>
     <div>
-      <div class="header-title" id="headerTitle">Home Loan Calculator</div>
-      <div class="header-sub">Plan smarter · Pay faster · Save more</div>
+      <div class="app-title" id="headerTitle">Home Loan Calculator</div>
+      <div class="app-sub">Plan smarter · Pay faster · Save more</div>
     </div>
   </div>
-  <div class="header-badge">EMI Planner</div>
+  <div class="app-badge">EMI Planner</div>
 </div>
 
-<!-- LAYOUT -->
-<div class="layout">
+<!-- ── TAB BAR ── -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab1" onclick="switchTab(1)">
+    <span class="tab-icon">📝</span>
+    Inputs & Summary
+  </button>
+  <button class="tab-btn" id="tab2" onclick="switchTab(2)">
+    <span class="tab-icon">📊</span>
+    Breakdown & Schedule
+  </button>
+</div>
 
-  <!-- ══ LEFT: INPUTS ══ -->
-  <div class="panel">
+<!-- ── SCREENS ── -->
+<div class="screens">
 
-    <!-- Your Name -->
-    <p class="section-title">👤 Your Details</p>
-    <div class="field">
-      <label>Your Name</label>
-      <div class="input-wrap">
-        <input type="text" id="userName" class="name-input" value="Santosh Aggarwal" placeholder="Enter your name" oninput="updateName()" style="padding-left:14px;padding-right:14px;"/>
+  <!-- ══════════ SCREEN 1 ══════════ -->
+  <div class="screen active" id="screen1">
+
+    <!-- Your Details -->
+    <div class="section-card">
+      <div class="section-head">👤 Your Details</div>
+      <div class="field">
+        <label>Your Name</label>
+        <div class="input-wrap">
+          <input type="text" id="userName" class="name-input"
+            value="Santosh Aggarwal" placeholder="Enter your name"
+            oninput="updateName()"/>
+        </div>
       </div>
     </div>
-
-    <div class="divider"></div>
 
     <!-- Loan Details -->
-    <p class="section-title">📋 Loan Details</p>
+    <div class="section-card">
+      <div class="section-head">📋 Loan Details</div>
 
-    <div class="field">
-      <label>Loan Amount</label>
-      <div class="input-wrap">
-        <input type="text" id="loanAmount" inputmode="numeric" value="50,00,000" onfocus="onFocusNum(this)" onblur="onBlurNum(this,'loanAmount')" oninput="onInputNum(this)" style="padding-left:14px;padding-right:36px;"/>
-        <span class="cur">₹</span>
+      <div class="field">
+        <label>Loan Amount</label>
+        <div class="input-wrap">
+          <input type="text" id="loanAmount" inputmode="numeric"
+            value="50,00,000" placeholder="e.g. 50,00,000"
+            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'loanAmount')" oninput="onInputNum(this)"/>
+          <span class="cur">₹</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Annual Interest Rate</label>
+        <div class="input-wrap">
+          <input type="text" id="rate" inputmode="decimal"
+            value="8.5" placeholder="e.g. 8.5"
+            onfocus="onFocusDec(this)" onblur="onBlurDec(this,'rate')" oninput="onInputDec(this)"/>
+          <span class="suf">%</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Loan Tenure</label>
+        <div class="input-wrap">
+          <input type="text" id="tenure" inputmode="numeric"
+            value="20" placeholder="e.g. 20"
+            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'tenure')" oninput="onInputNum(this)"/>
+          <span class="suf">Yrs</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Instalment Frequency</label>
+        <div class="freq-grid">
+          <button class="freq-btn active" onclick="setFreq('Monthly',this)">Monthly</button>
+          <button class="freq-btn" onclick="setFreq('Quarterly',this)">Quarterly</button>
+          <button class="freq-btn" onclick="setFreq('Half-Yearly',this)">Half-Yrly</button>
+          <button class="freq-btn" onclick="setFreq('Yearly',this)">Yearly</button>
+        </div>
       </div>
     </div>
-
-    <div class="field">
-      <label>Annual Interest Rate</label>
-      <div class="input-wrap">
-        <input type="text" id="rate" inputmode="decimal" value="8.5" onfocus="onFocusDec(this)" onblur="onBlurDec(this,'rate')" oninput="onInputDec(this)" style="padding-left:14px;padding-right:40px;"/>
-        <span class="suf">%</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Loan Tenure</label>
-      <div class="input-wrap">
-        <input type="text" id="tenure" inputmode="numeric" value="20" onfocus="onFocusNum(this)" onblur="onBlurNum(this,'tenure')" oninput="onInputNum(this)" style="padding-left:14px;padding-right:40px;"/>
-        <span class="suf">Yrs</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Instalment Frequency</label>
-      <div class="freq-grid">
-        <button class="freq-btn active" onclick="setFreq('Monthly',this)">Monthly</button>
-        <button class="freq-btn" onclick="setFreq('Quarterly',this)">Quarterly</button>
-        <button class="freq-btn" onclick="setFreq('Half-Yearly',this)">Half-Yrly</button>
-        <button class="freq-btn" onclick="setFreq('Yearly',this)">Yearly</button>
-      </div>
-    </div>
-
-    <div class="divider"></div>
 
     <!-- Accelerators -->
-    <p class="section-title">⚡ Accelerators</p>
-    <p class="hint">Tweak these to see how much faster you can close the loan.</p>
+    <div class="section-card">
+      <div class="section-head">⚡ Accelerators</div>
+      <p class="hint">Tweak these to see how much faster you can close the loan.</p>
 
-    <div class="field">
-      <label>No. of Extra EMIs per Year</label>
-      <div class="input-wrap">
-        <input type="text" id="extraEMI" inputmode="numeric" value="0" onfocus="onFocusNum(this)" onblur="onBlurNum(this,'extraEMI')" oninput="onInputNum(this)" style="padding-left:14px;padding-right:40px;"/>
-        <span class="suf">EMI</span>
+      <div class="field">
+        <label>Extra EMIs per Year</label>
+        <div class="input-wrap">
+          <input type="text" id="extraEMI" inputmode="numeric"
+            value="0" placeholder="0"
+            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'extraEMI')" oninput="onInputNum(this)"/>
+          <span class="suf">EMI</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Annual Lump-Sum Prepayment</label>
+        <div class="input-wrap">
+          <input type="text" id="prepay" inputmode="numeric"
+            value="0" placeholder="0"
+            onfocus="onFocusNum(this)" onblur="onBlurNum(this,'prepay')" oninput="onInputNum(this)"/>
+          <span class="cur">₹</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Annual EMI Step-Up</label>
+        <div class="input-wrap">
+          <input type="text" id="stepUp" inputmode="decimal"
+            value="0" placeholder="0"
+            onfocus="onFocusDec(this)" onblur="onBlurDec(this,'stepUp')" oninput="onInputDec(this)"/>
+          <span class="suf">%</span>
+        </div>
       </div>
     </div>
 
-    <div class="field">
-      <label>Annual Lump-Sum Prepayment</label>
-      <div class="input-wrap">
-        <input type="text" id="prepay" inputmode="numeric" value="0" onfocus="onFocusNum(this)" onblur="onBlurNum(this,'prepay')" oninput="onInputNum(this)" style="padding-left:14px;padding-right:36px;"/>
-        <span class="cur">₹</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Annual EMI Step-Up</label>
-      <div class="input-wrap">
-        <input type="text" id="stepUp" inputmode="decimal" value="0" onfocus="onFocusDec(this)" onblur="onBlurDec(this,'stepUp')" oninput="onInputDec(this)" style="padding-left:14px;padding-right:40px;"/>
-        <span class="suf">%</span>
-      </div>
-    </div>
-
-    <!-- Disclaimer -->
-    <div class="disclaimer">
-      <div class="disclaimer-title">⚠️ Disclaimer</div>
-      <p class="disclaimer-preview">For indicative planning only. Calculations use the reducing balance method with prepayments applied at year-end.</p>
-      <p class="disclaimer-full" id="disclaimerFull">Actual savings may vary based on your lender's terms, prepayment timing, and applicable charges. Prepayment penalties may apply on fixed-rate loans. Please consult your lender or a financial advisor before making any financial decisions.</p>
-      <button class="disclaimer-toggle" id="disclaimerBtn" onclick="toggleDisclaimer()">Read more ▾</button>
-    </div>
-  </div>
-
-  <!-- ══ RIGHT: RESULTS ══ -->
-  <div class="results">
-
-    <!-- Hero EMI -->
+    <!-- Hero EMI Bar -->
     <div class="emi-hero">
       <div>
         <div class="emi-hero-label" id="emiFreqLabel">Monthly EMI</div>
@@ -331,35 +395,35 @@
       </div>
     </div>
 
-    <!-- Stat cards -->
-    <p class="section-title">📊 Loan Snapshot</p>
+    <!-- Loan Snapshot -->
+    <div class="section-head" style="margin-bottom:10px">📊 Loan Snapshot</div>
     <div class="card-grid">
       <div class="stat-card" style="border-top:3px solid #3b82f6">
         <div class="stat-icon">🏦</div>
         <div class="stat-label">Principal</div>
         <div class="stat-value" id="cardPrincipal" style="color:#3b82f6">₹0</div>
       </div>
-      <div class="stat-card" style="border-top:3px solid #f97316">
+      <div class="stat-card" style="border-top:3px solid var(--orange)">
         <div class="stat-icon">💸</div>
         <div class="stat-label">Total Interest</div>
-        <div class="stat-value" id="cardInterest" style="color:#f97316">₹0</div>
+        <div class="stat-value" id="cardInterest" style="color:var(--orange)">₹0</div>
       </div>
-      <div class="stat-card" style="border-top:3px solid #8b5cf6">
+      <div class="stat-card" style="border-top:3px solid var(--purple)">
         <div class="stat-icon">💰</div>
         <div class="stat-label">Total Payable</div>
-        <div class="stat-value" id="cardPayable" style="color:#8b5cf6">₹0</div>
+        <div class="stat-value" id="cardPayable" style="color:var(--purple)">₹0</div>
       </div>
-      <div class="stat-card" style="border-top:3px solid #0ea5e9">
+      <div class="stat-card" style="border-top:3px solid var(--sky)">
         <div class="stat-icon">📅</div>
         <div class="stat-label">Base Duration</div>
-        <div class="stat-value" id="cardDuration" style="color:#0ea5e9">0 Years</div>
+        <div class="stat-value" id="cardDuration" style="color:var(--sky)">0 Yrs</div>
       </div>
     </div>
 
-    <!-- Savings Impact box (hidden until accelerators used) -->
+    <!-- Savings Impact -->
     <div class="impact-box" id="impactBox">
       <div class="impact-header">
-        <span class="impact-title">🎯 Savings Impact</span>
+        <span class="impact-title">🎯 Saving Impact</span>
         <span class="savings-badge" id="savingsBadge">Save ₹0</span>
       </div>
       <div class="impact-row">
@@ -396,23 +460,39 @@
       </div>
     </div>
 
-    <!-- SVG Bar Chart -->
-    <p class="section-title">📈 Year-wise Breakdown</p>
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <div class="disclaimer-title">⚠️ Disclaimer</div>
+      <p class="disclaimer-preview">For indicative planning only. Calculations use the reducing balance method with prepayments applied at year-end.</p>
+      <p class="disclaimer-full" id="disclaimerFull">Actual savings may vary based on your lender's terms, prepayment timing, and applicable charges. Prepayment penalties may apply on fixed-rate loans. Please consult your lender or a financial advisor before making any financial decisions.</p>
+      <button class="disclaimer-toggle" id="disclaimerBtn" onclick="toggleDisclaimer()">Read more ▾</button>
+    </div>
+
+    <div class="footer">
+      <p id="footerName">Personalised for Santosh Aggarwal</p>
+      <small>Built with ❤️ by Claude · Anthropic</small>
+    </div>
+
+  </div><!-- /screen1 -->
+
+  <!-- ══════════ SCREEN 2 ══════════ -->
+  <div class="screen" id="screen2">
+
+    <div class="screen2-head">📈 Year-wise Breakdown</div>
     <div class="chart-card">
       <svg id="barChart" width="100%" style="display:block;"></svg>
       <div class="chart-legend">
         <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Principal</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>Interest</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Interest</div>
       </div>
     </div>
 
-    <!-- Amortization Table -->
-    <p class="section-title">📋 Amortization Schedule</p>
+    <div class="screen2-head">📋 Amortization Schedule</div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th style="text-align:center">Yr</th>
+            <th>Yr</th>
             <th>Opening</th>
             <th>Principal</th>
             <th>Interest</th>
@@ -424,306 +504,188 @@
       </table>
     </div>
 
-    <!-- Footer / Credits -->
     <div class="footer">
-      <p id="footerName">Personalised for Santosh Aggarwal</p>
+      <p id="footerName2">Personalised for Santosh Aggarwal</p>
       <small>Built with ❤️ by Claude · Anthropic</small>
     </div>
 
-  </div><!-- /results -->
-</div><!-- /layout -->
+  </div><!-- /screen2 -->
 
-<!-- Chart tooltip -->
+</div><!-- /screens -->
+
 <div id="chart-tooltip"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// STATE — all input values live here; updated by the input handlers below
-// ═══════════════════════════════════════════════════════════════════════════════
-const state = {
-  loanAmount: 5000000,
-  rate: 8.5,
-  tenure: 20,
-  freq: "Monthly",
-  extraEMI: 0,
-  prepay: 0,
-  stepUp: 0,
-};
-
-const PPY = { Monthly: 12, Quarterly: 4, "Half-Yearly": 2, Yearly: 1 };
-
-// ── FORMATTING ────────────────────────────────────────────────────────────────
-// toIndian: formats a number with Indian comma grouping (e.g. 50,00,000)
-function toIndian(n) {
-  return Math.round(n).toLocaleString("en-IN");
+// ── TAB SWITCHING ──
+function switchTab(n) {
+  document.getElementById('screen1').classList.toggle('active', n === 1);
+  document.getElementById('screen2').classList.toggle('active', n === 2);
+  document.getElementById('tab1').classList.toggle('active', n === 1);
+  document.getElementById('tab2').classList.toggle('active', n === 2);
+  if (n === 2) renderChart(lastRows);
 }
+
+// ── STATE ──
+const state = { loanAmount: 5000000, rate: 8.5, tenure: 20, freq: "Monthly", extraEMI: 0, prepay: 0, stepUp: 0 };
+const PPY   = { Monthly: 12, Quarterly: 4, "Half-Yearly": 2, Yearly: 1 };
+let lastRows = [];
+
+// ── FORMAT ──
+function toIndian(n) { return Math.round(n).toLocaleString("en-IN"); }
 function fmt(n) { return "₹" + toIndian(n); }
 
-// ── LOAN MATH ─────────────────────────────────────────────────────────────────
-// Standard EMI formula for reducing-balance loans
+// ── LOAN MATH ──
 function calcEMI(p, r, n) {
   if (r === 0) return p / n;
   return (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
 }
-
-// Simulates the full loan year-by-year.
-// extraEMI / prepay / stepUp are optional accelerators.
 function simulate(loanAmt, annualRate, tenureYrs, freq, extraEMI, prepay, stepUp) {
-  const ppy = PPY[freq];
-  const pr = annualRate / 100 / ppy;
-  const np = tenureYrs * ppy;
+  const ppy = PPY[freq], pr = annualRate / 100 / ppy, np = tenureYrs * ppy;
   const baseEMI = calcEMI(loanAmt, pr, np);
   let bal = loanAmt, period = 0, year = 1, emi = baseEMI, totalInt = 0;
   const rows = [];
-
   while (bal > 0.5 && period < np * 3) {
-    // Step-up: EMI increases at the start of each new year
     if (period > 0 && period % ppy === 0) { year++; emi *= (1 + stepUp / 100); }
-
-    const open = bal;
-    let yInt = 0, yPrin = 0, yPre = 0;
-
-    // Process each instalment period within this year
+    const open = bal; let yInt = 0, yPrin = 0, yPre = 0;
     for (let p = 0; p < ppy && bal > 0.5; p++) {
-      const interest = bal * pr;
-      const principal = Math.min(emi - interest, bal);
-      bal -= principal;
-      yInt += interest;
-      yPrin += principal;
-      period++;
+      const interest = bal * pr, principal = Math.min(emi - interest, bal);
+      bal -= principal; yInt += interest; yPrin += principal; period++;
     }
     totalInt += yInt;
-
-    // Apply accelerators at year-end
     if (extraEMI > 0 && bal > 0.5) { const e = Math.min(emi * extraEMI, bal); bal -= e; yPrin += e; yPre += e; }
     if (prepay > 0 && bal > 0.5)   { const pp = Math.min(prepay, bal); bal -= pp; yPrin += pp; yPre += pp; }
-
-    rows.push({
-      year, opening: Math.round(open),
-      principal: Math.round(yPrin), interest: Math.round(yInt),
-      prepayment: Math.round(yPre), closing: Math.round(Math.max(bal, 0))
-    });
+    rows.push({ year, opening: Math.round(open), principal: Math.round(yPrin), interest: Math.round(yInt), prepayment: Math.round(yPre), closing: Math.round(Math.max(bal, 0)) });
     if (bal <= 0.5) break;
   }
   return { rows, baseEMI, totalInterest: totalInt, totalPaid: loanAmt + totalInt, actualYears: rows.length };
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// INPUT HANDLERS
-// Two-lane pattern: the field shows a formatted string, but state stores a number.
-// For integer fields (loan amount, tenure etc.):
-//   - onFocus: strip commas so the user sees a plain number they can edit
-//   - onBlur: re-format with Indian commas
-// For decimal fields (rate, stepUp):
-//   - same idea but we preserve dots mid-typing so "8." stays as "8."
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function onFocusNum(el) {
-  // Show raw number on focus so user can type freely
-  const raw = el.value.replace(/,/g, "");
-  el.value = (raw === "0" || raw === "") ? "" : raw;
-  el.select();
-}
-function onBlurNum(el, key) {
-  // Parse and store, then re-format display
-  const v = parseInt(el.value.replace(/,/g, ""), 10);
-  state[key] = isNaN(v) ? 0 : v;
-  el.value = state[key] === 0 ? "0" : toIndian(state[key]);
-  recalculate();
-}
-function onInputNum(el) {
-  // Allow only digits and commas while typing; update state live
-  el.value = el.value.replace(/[^\d]/g, "");
-  const v = parseInt(el.value, 10);
-  // Find which key this input belongs to and update state
-  const key = el.id;
-  if (!isNaN(v)) { state[key] = v; recalculate(); }
-}
-
-function onFocusDec(el) {
-  el.value = (el.value === "0" || el.value === "") ? "" : el.value;
-  el.select();
-}
-function onBlurDec(el, key) {
-  const v = parseFloat(el.value);
-  state[key] = isNaN(v) ? 0 : v;
-  el.value = state[key];
-  recalculate();
-}
-function onInputDec(el) {
-  // Allow digits and a single decimal point; preserve mid-entry "8." state
-  const raw = el.value.replace(/[^\d.]/g, "");
-  if ((raw.match(/\./g) || []).length > 1) { el.value = el.value.slice(0,-1); return; }
-  el.value = raw;
-  const v = parseFloat(raw);
-  const key = el.id;
-  if (!isNaN(v)) { state[key] = v; recalculate(); }
-}
-
-function setFreq(f, btn) {
-  state.freq = f;
-  document.querySelectorAll(".freq-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  recalculate();
-}
+// ── INPUT HANDLERS ──
+function onFocusNum(el) { const raw = el.value.replace(/,/g,""); el.value = (raw==="0"||raw==="") ? "" : raw; el.select(); }
+function onBlurNum(el, key) { const v = parseInt(el.value.replace(/,/g,""),10); state[key]=isNaN(v)?0:v; el.value=state[key]===0?"0":toIndian(state[key]); recalculate(); }
+function onInputNum(el) { el.value=el.value.replace(/[^\d]/g,""); const v=parseInt(el.value,10); if(!isNaN(v)){state[el.id]=v;recalculate();} }
+function onFocusDec(el) { el.value=(el.value==="0"||el.value==="")?"":el.value; el.select(); }
+function onBlurDec(el, key) { const v=parseFloat(el.value); state[key]=isNaN(v)?0:v; el.value=state[key]; recalculate(); }
+function onInputDec(el) { const raw=el.value.replace(/[^\d.]/g,""); if((raw.match(/\./g)||[]).length>1){el.value=el.value.slice(0,-1);return;} el.value=raw; const v=parseFloat(raw); if(!isNaN(v)){state[el.id]=v;recalculate();} }
+function setFreq(f, btn) { state.freq=f; document.querySelectorAll(".freq-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); recalculate(); }
 
 function toggleDisclaimer() {
-  const full = document.getElementById("disclaimerFull");
-  const btn  = document.getElementById("disclaimerBtn");
-  const isOpen = full.style.display === "block";
-  full.style.display = isOpen ? "none" : "block";
-  btn.textContent = isOpen ? "Read more ▾" : "Read less ▴";
+  const full=document.getElementById("disclaimerFull"), btn=document.getElementById("disclaimerBtn");
+  const open=full.style.display==="block"; full.style.display=open?"none":"block"; btn.textContent=open?"Read more ▾":"Read less ▴";
 }
-
 function updateName() {
-  const name = document.getElementById("userName").value.trim();
-  document.getElementById("headerTitle").textContent = name ? name + "'s Loan Planner" : "Home Loan Calculator";
-  document.getElementById("footerName").textContent = name ? "Personalised for " + name : "Home Loan EMI Calculator";
+  const name=document.getElementById("userName").value.trim();
+  const label=name?name+"'s Loan Planner":"Home Loan Calculator";
+  document.getElementById("headerTitle").textContent=label;
+  document.getElementById("footerName").textContent=name?"Personalised for "+name:"Home Loan EMI Calculator";
+  document.getElementById("footerName2").textContent=name?"Personalised for "+name:"Home Loan EMI Calculator";
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// MAIN RECALCULATE — called on every input change
-// ═══════════════════════════════════════════════════════════════════════════════
+// ── RECALCULATE ──
 function recalculate() {
-  const { loanAmount, rate, tenure, freq, extraEMI, prepay, stepUp } = state;
+  const {loanAmount,rate,tenure,freq,extraEMI,prepay,stepUp}=state;
+  const base=simulate(loanAmount,rate,tenure,freq,0,0,0);
+  const opt =simulate(loanAmount,rate,tenure,freq,extraEMI,prepay,stepUp);
+  const hasExtras=extraEMI>0||prepay>0||stepUp>0;
+  lastRows=opt.rows;
 
-  const base = simulate(loanAmount, rate, tenure, freq, 0, 0, 0);
-  const opt  = simulate(loanAmount, rate, tenure, freq, extraEMI, prepay, stepUp);
-  const hasExtras = extraEMI > 0 || prepay > 0 || stepUp > 0;
+  document.getElementById("emiFreqLabel").textContent=freq+" EMI";
+  document.getElementById("baseEMIDisplay").textContent=fmt(base.baseEMI);
+  document.getElementById("closesIn").textContent=(hasExtras?opt.actualYears:base.actualYears)+" yrs";
 
-  // Hero bar
-  document.getElementById("emiFreqLabel").textContent = freq + " EMI";
-  document.getElementById("baseEMIDisplay").textContent = fmt(base.baseEMI);
-  document.getElementById("closesIn").textContent = (hasExtras ? opt.actualYears : base.actualYears) + " yrs";
+  document.getElementById("cardPrincipal").textContent=fmt(loanAmount);
+  document.getElementById("cardInterest").textContent =fmt(base.totalInterest);
+  document.getElementById("cardPayable").textContent  =fmt(base.totalPaid);
+  document.getElementById("cardDuration").textContent =base.actualYears+" Yrs";
 
-  // Stat cards
-  document.getElementById("cardPrincipal").textContent = fmt(loanAmount);
-  document.getElementById("cardInterest").textContent  = fmt(base.totalInterest);
-  document.getElementById("cardPayable").textContent   = fmt(base.totalPaid);
-  document.getElementById("cardDuration").textContent  = base.actualYears + " Years";
-
-  // Savings impact (show/hide based on whether accelerators are active)
-  const impactBox = document.getElementById("impactBox");
+  const impactBox=document.getElementById("impactBox");
   if (hasExtras) {
-    impactBox.style.display = "block";
-    const savedInt  = Math.max(base.totalInterest - opt.totalInterest, 0);
-    const savedYrs  = Math.max(base.actualYears - opt.actualYears, 0);
-    document.getElementById("savingsBadge").textContent = "Save " + fmt(savedInt);
-    document.getElementById("impIntBefore").textContent = fmt(base.totalInterest);
-    document.getElementById("impIntAfter").textContent  = fmt(opt.totalInterest);
-    document.getElementById("impPayBefore").textContent = fmt(base.totalPaid);
-    document.getElementById("impPayAfter").textContent  = fmt(opt.totalPaid);
-    document.getElementById("impDurBefore").textContent = base.actualYears + " yrs";
-    document.getElementById("impDurAfter").textContent  = opt.actualYears + " yrs";
-    document.getElementById("impSaved").textContent     = savedYrs + " yr" + (savedYrs !== 1 ? "s" : "") + " 🎉";
-  } else {
-    impactBox.style.display = "none";
-  }
+    impactBox.style.display="block";
+    const savedInt=Math.max(base.totalInterest-opt.totalInterest,0);
+    const savedYrs=Math.max(base.actualYears-opt.actualYears,0);
+    document.getElementById("savingsBadge").textContent="Save "+fmt(savedInt);
+    document.getElementById("impIntBefore").textContent=fmt(base.totalInterest);
+    document.getElementById("impIntAfter").textContent =fmt(opt.totalInterest);
+    document.getElementById("impPayBefore").textContent=fmt(base.totalPaid);
+    document.getElementById("impPayAfter").textContent =fmt(opt.totalPaid);
+    document.getElementById("impDurBefore").textContent=base.actualYears+" yrs";
+    document.getElementById("impDurAfter").textContent =opt.actualYears+" yrs";
+    document.getElementById("impSaved").textContent    =savedYrs+" yr"+(savedYrs!==1?"s":"")+" 🎉";
+  } else { impactBox.style.display="none"; }
 
-  // Render chart and table using optimised scenario
-  renderChart(opt.rows);
   renderTable(opt.rows);
+  if (document.getElementById("screen2").classList.contains("active")) renderChart(opt.rows);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// SVG BAR CHART — drawn entirely with SVG primitives; zero dependencies.
-// Each year gets a stacked bar: blue (principal) + orange (interest).
-// ═══════════════════════════════════════════════════════════════════════════════
+// ── CHART ──
 function renderChart(rows) {
-  const svg = document.getElementById("barChart");
-  const W = svg.parentElement.clientWidth - 24; // account for card padding
-  const H = 220;
-  const padL = 46, padR = 8, padT = 10, padB = 28;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
+  if (!rows || rows.length === 0) return;
+  const svg=document.getElementById("barChart");
+  const W=svg.parentElement.clientWidth-20;
+  const H=200, padL=44, padR=6, padT=8, padB=26;
+  const chartW=W-padL-padR, chartH=H-padT-padB;
+  const maxVal=Math.max(...rows.map(r=>r.principal+r.interest),1);
+  const labelStep=rows.length>20?5:rows.length>10?2:1;
+  const barW=Math.max(2, chartW/rows.length - 2);
 
-  // Find the maximum total value for scaling
-  const maxVal = Math.max(...rows.map(r => r.principal + r.interest), 1);
-
-  // Only show every Nth year label if there are many years
-  const labelStep = rows.length > 20 ? 5 : rows.length > 10 ? 2 : 1;
-  const barW = Math.max(2, chartW / rows.length - 2);
-
-  let svgHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" style="overflow:visible">`;
-
-  // Y-axis gridlines and labels (5 levels)
-  for (let i = 0; i <= 4; i++) {
-    const y = padT + chartH - (i / 4) * chartH;
-    const val = (i / 4) * maxVal;
-    const label = val >= 100000 ? "₹" + (val/100000).toFixed(0) + "L" : "₹" + Math.round(val/1000) + "K";
-    svgHTML += `<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="#f1f5f9" stroke-width="1"/>`;
-    svgHTML += `<text x="${padL-4}" y="${y+4}" text-anchor="end" font-size="9" fill="#94a3b8">${label}</text>`;
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" style="overflow:visible">`;
+  for (let i=0;i<=4;i++) {
+    const y=padT+chartH-(i/4)*chartH;
+    const val=(i/4)*maxVal;
+    const lbl=val>=100000?"₹"+(val/100000).toFixed(0)+"L":"₹"+Math.round(val/1000)+"K";
+    s+=`<line x1="${padL}" y1="${y}" x2="${padL+chartW}" y2="${y}" stroke="#f1f5f9" stroke-width="1"/>`;
+    s+=`<text x="${padL-4}" y="${y+4}" text-anchor="end" font-size="9" fill="#94a3b8">${lbl}</text>`;
   }
-
-  // Draw bars
-  rows.forEach((r, i) => {
-    const x = padL + (i / rows.length) * chartW + 1;
-    const totalH = ((r.principal + r.interest) / maxVal) * chartH;
-    const prinH  = (r.principal / maxVal) * chartH;
-    const intH   = totalH - prinH;
-    const barY   = padT + chartH - totalH;
-
-    // Interest segment (top, orange)
-    svgHTML += `<rect x="${x}" y="${padT + chartH - totalH}" width="${barW}" height="${intH}" fill="#f97316" rx="2"
+  rows.forEach((r,i) => {
+    const x=padL+(i/rows.length)*chartW+1;
+    const totalH=((r.principal+r.interest)/maxVal)*chartH;
+    const prinH=(r.principal/maxVal)*chartH;
+    const intH=totalH-prinH;
+    s+=`<rect x="${x}" y="${padT+chartH-totalH}" width="${barW}" height="${intH}" fill="#f97316" rx="2"
       onmouseenter="showTip(event,${r.year},${r.principal},${r.interest})"
       ontouchstart="showTip(event,${r.year},${r.principal},${r.interest})"
       onmouseleave="hideTip()" ontouchend="hideTip()"/>`;
-
-    // Principal segment (bottom, blue)
-    svgHTML += `<rect x="${x}" y="${padT + chartH - prinH}" width="${barW}" height="${prinH}" fill="#3b82f6"
+    s+=`<rect x="${x}" y="${padT+chartH-prinH}" width="${barW}" height="${prinH}" fill="#3b82f6"
       onmouseenter="showTip(event,${r.year},${r.principal},${r.interest})"
       ontouchstart="showTip(event,${r.year},${r.principal},${r.interest})"
       onmouseleave="hideTip()" ontouchend="hideTip()"/>`;
-
-    // X-axis year label (every Nth bar)
-    if (i % labelStep === 0 || i === rows.length - 1) {
-      svgHTML += `<text x="${x + barW/2}" y="${padT+chartH+14}" text-anchor="middle" font-size="9" fill="#94a3b8">${r.year}</text>`;
-    }
+    if (i%labelStep===0||i===rows.length-1)
+      s+=`<text x="${x+barW/2}" y="${padT+chartH+14}" text-anchor="middle" font-size="9" fill="#94a3b8">${r.year}</text>`;
   });
-
-  svgHTML += `</svg>`;
-  svg.innerHTML = svgHTML;
-  svg.setAttribute("height", H);
+  s+=`</svg>`;
+  svg.innerHTML=s; svg.setAttribute("height",H);
 }
 
-function showTip(e, year, principal, interest) {
-  const tip = document.getElementById("chart-tooltip");
-  tip.innerHTML = `<b>Year ${year}</b><br><span style="color:#60a5fa">Principal: ${fmt(principal)}</span><br><span style="color:#fb923c">Interest: ${fmt(interest)}</span>`;
-  tip.style.display = "block";
-  // Position near the touch/mouse point
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  tip.style.left = Math.min(clientX + 10, window.innerWidth - 160) + "px";
-  tip.style.top  = (clientY - 70) + "px";
+function showTip(e,year,principal,interest) {
+  const tip=document.getElementById("chart-tooltip");
+  tip.innerHTML=`<b>Year ${year}</b><br><span style="color:#60a5fa">Principal: ${fmt(principal)}</span><br><span style="color:#fb923c">Interest: ${fmt(interest)}</span>`;
+  tip.style.display="block";
+  const clientX=e.touches?e.touches[0].clientX:e.clientX;
+  const clientY=e.touches?e.touches[0].clientY:e.clientY;
+  tip.style.left=Math.min(clientX+10,window.innerWidth-160)+"px";
+  tip.style.top=(clientY-70)+"px";
 }
-function hideTip() { document.getElementById("chart-tooltip").style.display = "none"; }
+function hideTip() { document.getElementById("chart-tooltip").style.display="none"; }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// AMORTIZATION TABLE
-// ═══════════════════════════════════════════════════════════════════════════════
+// ── TABLE ──
 function renderTable(rows) {
-  const tbody = document.getElementById("tableBody");
-  tbody.innerHTML = rows.map((r, i) => `
+  document.getElementById("tableBody").innerHTML=rows.map(r=>`
     <tr>
-      <td style="text-align:center;font-weight:700;color:#64748b">${r.year}</td>
+      <td>${r.year}</td>
       <td>${fmt(r.opening)}</td>
       <td style="color:#3b82f6;font-weight:600">${fmt(r.principal)}</td>
       <td style="color:#f97316">${fmt(r.interest)}</td>
-      <td style="color:${r.prepayment > 0 ? '#16a34a' : '#cbd5e1'};font-weight:${r.prepayment > 0 ? 600 : 400}">
-        ${r.prepayment > 0 ? fmt(r.prepayment) : '—'}
-      </td>
-      <td style="font-weight:700;color:${r.closing === 0 ? '#16a34a' : '#1e293b'}">
-        ${r.closing === 0 ? '✅ Done' : fmt(r.closing)}
-      </td>
+      <td style="color:${r.prepayment>0?'#16a34a':'#cbd5e1'};font-weight:${r.prepayment>0?600:400}">${r.prepayment>0?fmt(r.prepayment):'—'}</td>
+      <td style="font-weight:700;color:${r.closing===0?'#16a34a':'#1e293b'}">${r.closing===0?'✅ Done':fmt(r.closing)}</td>
     </tr>`).join("");
 }
 
-// ── BOOT: run once on page load ───────────────────────────────────────────────
+// ── BOOT ──
 window.addEventListener("load", () => {
-  recalculate();    // Calculate with default values immediately
-  updateName();     // Set personalised title
-  // Redraw chart if window is resized (e.g. orientation change on phone)
-  window.addEventListener("resize", recalculate);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+  recalculate();
+  updateName();
+  window.addEventListener("resize", () => { if(document.getElementById("screen2").classList.contains("active")) renderChart(lastRows); });
 });
 </script>
 </body>
